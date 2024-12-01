@@ -17,28 +17,23 @@ fn parse_input(input: &str) -> (Vec<i32>, Vec<i32>) {
 
 pub fn part_one(input: &str) -> Option<i32> {
     let (mut list1, mut list2) = parse_input(input);
-    list1.sort();
-    list2.sort();
-    let sum = list1.iter().zip(list2.iter()).fold(0, |acc, (a, b)| {
-        if a == b {
-            return acc;
-        }
-        let dist: i32 = (a - b).abs();
-        acc + dist
-    });
+    list1.sort_unstable();
+    list2.sort_unstable();
+    let sum = list1
+        .iter()
+        .zip(list2.iter())
+        .map(|(a, b)| (a - b).abs())
+        .sum();
     Some(sum)
 }
 
-pub fn part_two(input: &str) -> Option<u32> {
+pub fn part_two(input: &str) -> Option<i32> {
     let (list1, list2) = parse_input(input);
-    let mut map: HashMap<&i32, u32> = HashMap::new();
+    let mut map: HashMap<&i32, i32> = HashMap::new();
     for item in &list2[..list2.len() - 1] {
         *map.entry(item).or_insert(0) += 1;
     }
-    let sum: u32 = list1.iter().fold(0, |acc, item| {
-        let count: &u32 = map.get(item).unwrap_or(&0);
-        acc + (count * (*item as u32))
-    });
+    let sum: i32 = list1.iter().map(|i| i * map.get(i).unwrap_or(&0)).sum();
     Some(sum)
 }
 
